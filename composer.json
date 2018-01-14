@@ -10,9 +10,11 @@
             "email": "mikejpeters@gmail.com"
         }
     ],
+    "minimum-stability": "stable",
     "require": {
         "yiisoft/yii2": ">=2.0.4",
-        "mailgun/mailgun-php": "~1.8"
+        "mailgun/mailgun-php": "2.4.0",
+        "php-http/guzzle6-adapter": "@stable"
     },
     "autoload": {
         "psr-4": {

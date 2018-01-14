@@ -95,7 +95,7 @@ class Message extends BaseMessage
     public function getTo()
     {
         $message = $this->getMessageBuilder()->getMessage();
-        return !empty($message['to']) ? $message['to'] : null;
+        return !empty($message['to']) ? array_flip($message['to']) : null;
     }
 
     /**
@@ -114,7 +114,7 @@ class Message extends BaseMessage
     public function getCc()
     {
         $message = $this->getMessageBuilder()->getMessage();
-        return !empty($message['cc']) ? $message['cc'] : null;
+        return !empty($message['cc']) ? array_flip($message['cc']) : null;
     }
 
     /**
@@ -133,7 +133,7 @@ class Message extends BaseMessage
     public function getBcc()
     {
         $message = $this->getMessageBuilder()->getMessage();
-        return !empty($message['bcc']) ? $message['bcc'] : null;
+        return !empty($message['bcc']) ? array_flip($message['bcc']) : null;
     }
 
     /**
