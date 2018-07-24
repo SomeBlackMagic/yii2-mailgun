@@ -17,8 +17,8 @@ class Message extends BaseMessage
      * @var MessageBuilder Mailgun message builder.
      */
     private $_messageBuilder;
-
-
+    
+    
     /**
      * @return MessageBuilder Mailgun message builder.
      */
@@ -27,10 +27,10 @@ class Message extends BaseMessage
         if (!is_object($this->_messageBuilder)) {
             $this->_messageBuilder = $this->createMessageBuilder();
         }
-
+        
         return $this->_messageBuilder;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -38,7 +38,7 @@ class Message extends BaseMessage
     {
         return 'utf8';
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -46,7 +46,7 @@ class Message extends BaseMessage
     {
         throw new NotSupportedException();
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -54,7 +54,7 @@ class Message extends BaseMessage
     {
         return null;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -67,10 +67,10 @@ class Message extends BaseMessage
         } else {
             $this->getMessageBuilder()->setFromAddress($from);
         }
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -78,17 +78,17 @@ class Message extends BaseMessage
     {
         return null;
     }
-
+    
     /**
      * @inheritdoc
      */
     public function setReplyTo($replyTo)
     {
         $this->getMessageBuilder()->setReplyToAddress($replyTo);
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -97,17 +97,30 @@ class Message extends BaseMessage
         $message = $this->getMessageBuilder()->getMessage();
         return !empty($message['to']) ? array_flip($message['to']) : null;
     }
-
+    
+    /**
+     * 添加Tag标志
+     *
+     * @param array $tag
+     * @return $this
+     */
+    public function setTag($tag) {
+        foreach ($tag as $item){
+            $this->getMessageBuilder()->addTag($tag);
+        }
+        return $this;
+    }
+    
     /**
      * @inheritdoc
      */
     public function setTo($to)
     {
         $this->getMessageBuilder()->addToRecipient($to);
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -116,17 +129,17 @@ class Message extends BaseMessage
         $message = $this->getMessageBuilder()->getMessage();
         return !empty($message['cc']) ? array_flip($message['cc']) : null;
     }
-
+    
     /**
      * @inheritdoc
      */
     public function setCc($cc)
     {
         $this->getMessageBuilder()->addCcRecipient($cc);
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -139,13 +152,21 @@ class Message extends BaseMessage
     /**
      * @inheritdoc
      */
+    public function getHtmlBody()
+    {
+        return $this->getMessageBuilder()->getMessage();
+    }
+    
+    /**
+     * @inheritdoc
+     */
     public function setBcc($bcc)
     {
         $this->getMessageBuilder()->addBccRecipient($bcc);
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -154,37 +175,37 @@ class Message extends BaseMessage
         $message = $this->getMessageBuilder()->getMessage();
         return !empty($message['subject']) ? $message['subject'] : null;
     }
-
+    
     /**
      * @inheritdoc
      */
     public function setSubject($subject)
     {
         $this->getMessageBuilder()->setSubject($subject);
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritdoc
      */
     public function setTextBody($text)
     {
         $this->getMessageBuilder()->setTextBody($text);
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritdoc
      */
     public function setHtmlBody($html)
     {
         $this->getMessageBuilder()->setHtmlBody($html);
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -192,10 +213,10 @@ class Message extends BaseMessage
     {
         $attachmentName = !empty($options['fileName']) ? $options['fileName'] : null;
         $this->getMessageBuilder()->addAttachment("@{$fileName}", $attachmentName);
-
+        
         return $this;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -203,15 +224,17 @@ class Message extends BaseMessage
     {
         throw new NotSupportedException();
     }
-
+    
     /**
      * @inheritdoc
      */
     public function embed($fileName, array $options = [])
     {
-        throw new NotSupportedException();
+        $attachmentName = !empty($options['fileName']) ? $options['fileName'] : basename($fileName);
+        $this->getMessageBuilder()->addInlineImage("@{$fileName}", $attachmentName);
+        return 'cid:'.$attachmentName;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -219,7 +242,7 @@ class Message extends BaseMessage
     {
         throw new NotSupportedException();
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -227,7 +250,7 @@ class Message extends BaseMessage
     {
         return VarDumper::dumpAsString($this->getMessageBuilder()->getMessage());
     }
-
+    
     /**
      * Creates the Mailgun message builder.
      * @return MessageBuilder message builder.
@@ -236,4 +259,5 @@ class Message extends BaseMessage
     {
         return new MessageBuilder;
     }
+    
 }
