@@ -58,6 +58,7 @@ class Mailer extends BaseMailer
 
     /**
      * @return Mailgun Mailgun instance.
+     * @throws InvalidConfigException
      */
     public function getMailgun()
     {
@@ -69,17 +70,26 @@ class Mailer extends BaseMailer
     }
 
     /**
-     * @inheritdoc
+     * @param \yii\mail\MessageInterface $message
+     * @return bool
+     * @throws InvalidConfigException
      */
     protected function sendMessage($message)
     {
-        Yii::info('Sending email', __METHOD__);
+        Yii::trace('Sending email', __METHOD__);
 
-        $this->getMailgun()->post("{$this->domain}/messages",
+        $data = $this->getMailgun()->post("{$this->domain}/messages",
             $message->getMessageBuilder()->getMessage(),
             $message->getMessageBuilder()->getFiles());
 
-         return true;
+        Yii::trace('Status:'.json_encode($data->http_response_body),__METHOD__);
+
+        if($data->http_response_code === 200) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     /**
